@@ -1,0 +1,54 @@
+<main *ngIf="game$ | async as game">
+    <div class="hand" id="IAHand">
+        <div class="card" *ngFor="let card of game.IAHand">
+            <img src="../../assets/tile069.png" [alt]="card.name" />
+        </div>
+    </div>
+    <div id="IAArea">
+        @for (card of game.IAPlayedCards; track card) {
+        <div class="card">
+            <img [src]="card.image" [alt]="card.name" />
+        </div>
+        }
+    </div>
+    <div id="info">
+        <div id="IAInfo">
+            <p>Vida IA: 3</p>
+            <div id="ia-deck" class="deck" [attr.data-counter]="5">
+                <img src="../../assets/tile069.png" />
+            </div>
+        </div>
+
+
+        <div id="playerInfo">
+            <p>Vida Jugador: 3</p>
+            <div id="player-deck" class="deck" [attr.data-counter]="5">
+                <img src="../../assets/tile069.png" />
+            </div>
+        </div>
+    </div>
+    <div id="playArea" cdkDropList #playArea="cdkDropList" cdkDropListOrientation="horizontal"
+        [cdkDropListData]="game.playedCards" [cdkDropListConnectedTo]="[handList]"
+        (cdkDropListDropped)="drop($event)">
+        @for (card of game.playedCards; track card) {
+        <div class="card">
+            <img [src]="card.image" [alt]="card.name" />
+        </div>
+        }
+    </div>
+
+    <div class="hand" id="playerHand" cdkDropList #handList="cdkDropList" cdkDropListOrientation="horizontal"
+        [cdkDropListData]="game.playerHand" [cdkDropListConnectedTo]="[playArea]"
+        (cdkDropListDropped)="drop($event)">
+        @for (card of game.playerHand; track card) {
+        <div class="card" cdkDrag>
+
+            <img [src]="card.image" [alt]="card.name" />
+            <div *cdkDragPreview>
+                <img [src]="card.image" [alt]="card.name" />
+            </div>
+        </div>
+        }
+
+    </div>
+</main>
