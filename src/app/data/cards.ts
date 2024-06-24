@@ -1,4 +1,6 @@
 import { Card } from "../models/card";
+import { PlayerType } from "../models/game";
+import { GameService } from "../services/game.service";
 
 export const cards: Card[] = [
     {
@@ -6,7 +8,12 @@ export const cards: Card[] = [
         power: 1,
         keywords: ["sneaky"],
         ability: {
-            type: "attack"
+            type: "attack",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                game.reduceLife();
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile000.png"
     },
@@ -21,7 +28,15 @@ export const cards: Card[] = [
         power: 7,
         keywords: [],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                if (game.currentPlayer == PlayerType.Player)
+                    game.playerLife = game.IALife;
+                else
+                    game.IALife = game.playerLife;
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile002.png"
     },
@@ -30,7 +45,20 @@ export const cards: Card[] = [
         power: 5,
         keywords: ["tough"],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer) {
+                    if (game.playedCards.length == 1) {
+                        game.playedCards[0].power += 5;
+                    }
+                } else if (!playedByPlayer){
+                    if (game.IAPlayedCards.length == 1) {
+                        game.IAPlayedCards[0].power += 5;
+                    }
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile003.png"
     },
@@ -39,25 +67,34 @@ export const cards: Card[] = [
         power: 3,
         keywords: ["hunter"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                gameService.playCardFromDiscard();
+            }
         },
-        image: "../assets/tile004.png"  
+        image: "../assets/tile004.png"
     },
     {
         name: "Compost Dragon",
         power: 3,
         keywords: ["hunter"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                gameService.playCardFromDiscard();
+            }
         },
-        image: "../assets/tile005.png"   
+        image: "../assets/tile005.png"
     },
     {
         name: "Explosive Toad",
         power: 5,
         keywords: ["frenzy"],
         ability: {
-            type: "defeated"
+            type: "defeated",
+            execute: (gameService: GameService) => {
+                gameService.defeatCreature(0);
+            }
         },
         image: "../assets/tile006.png"
     },
@@ -66,7 +103,10 @@ export const cards: Card[] = [
         power: 5,
         keywords: ["frenzy"],
         ability: {
-            type: "defeated"
+            type: "defeated",
+            execute: (gameService: GameService) => {
+                gameService.defeatCreature(0);
+            }
         },
         image: "../assets/tile007.png"
     },
@@ -87,7 +127,16 @@ export const cards: Card[] = [
         power: 2,
         keywords: ["poisonous"],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer) {
+                    game.IACantActivatePlayEffects = true;
+                } else {
+                    game.playerCantActivatePlayEffects = true;
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile010.png"
     },
@@ -96,7 +145,10 @@ export const cards: Card[] = [
         power: 8,
         keywords: [],
         ability: {
-            type: "attack"
+            type: "attack",
+            execute: (gameService: GameService) => {
+                gameService.discardCardOponent(1);
+            }
         },
         image: "../assets/tile011.png"
     },
@@ -105,7 +157,10 @@ export const cards: Card[] = [
         power: 8,
         keywords: [],
         ability: {
-            type: "attack"
+            type: "attack",
+            execute: (gameService: GameService) => {
+                gameService.discardCardOponent(1);
+            }
         },
         image: "../assets/tile012.png"
     },
@@ -114,7 +169,10 @@ export const cards: Card[] = [
         power: 2,
         keywords: ["sneaky"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                gameService.discardCardOponent(2);
+            }
         },
         image: "../assets/tile013.png"
     },
@@ -123,7 +181,10 @@ export const cards: Card[] = [
         power: 2,
         keywords: ["sneaky"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                gameService.discardCardOponent(2);
+            }
         },
         image: "../assets/tile014.png"
     },
@@ -132,7 +193,10 @@ export const cards: Card[] = [
         power: 3,
         keywords: ["sneaky"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                gameService.defeatCreature(7);
+            }
         },
         image: "../assets/tile015.png"
     },
@@ -141,7 +205,10 @@ export const cards: Card[] = [
         power: 3,
         keywords: ["sneaky"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                gameService.defeatCreature(7);
+            }
         },
         image: "../assets/tile016.png"
     },
@@ -150,7 +217,19 @@ export const cards: Card[] = [
         power: 7,
         keywords: [],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                let cardsToDefeat = [];
+                if (game.isPlayer()) {
+                    cardsToDefeat = game.IAPlayedCards.filter(card => card.power <= 4);
+                } else {
+                    cardsToDefeat = game.playedCards.filter(card => card.power <= 4);
+                }
+                cardsToDefeat.forEach(card => {
+                    gameService.defeat(card, game.currentPlayer);
+                })
+            }
         },
         image: "../assets/tile017.png"
     },
@@ -159,7 +238,19 @@ export const cards: Card[] = [
         power: 7,
         keywords: [],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                let cardsToDefeat = [];
+                if (game.isPlayer()) {
+                    cardsToDefeat = game.IAPlayedCards.filter(card => card.power <= 4);
+                } else {
+                    cardsToDefeat = game.playedCards.filter(card => card.power <= 4);
+                }
+                cardsToDefeat.forEach(card => {
+                    gameService.defeat(card, game.currentPlayer);
+                })
+            }
         },
         image: "../assets/tile018.png"
     },
@@ -168,7 +259,12 @@ export const cards: Card[] = [
         power: 5,
         keywords: ["hunter"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                game.reduceLife();
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile019.png"
     },
@@ -177,7 +273,12 @@ export const cards: Card[] = [
         power: 5,
         keywords: ["hunter"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                game.reduceLife();
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile020.png"
     },
@@ -198,7 +299,28 @@ export const cards: Card[] = [
         power: 5,
         keywords: ["hunter"],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer && game.currentPlayer == PlayerType.Player) {
+                    game.playedCards.forEach(card => {
+                        if (card.name != "Urchin Hurler") card.power += 2;
+                    })
+                } else if (!playedByPlayer && game.currentPlayer == PlayerType.IA){
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name != "Urchin Hurler") card.power += 2;
+                    })
+                } else if (playedByPlayer && game.currentPlayer == PlayerType.IA) {
+                    game.playedCards.forEach(card => {
+                        if (card.name != "Urchin Hurler") card.power -= 2;
+                    })
+                } else if (!playedByPlayer && game.currentPlayer == PlayerType.Player) {
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name != "Urchin Hurler") card.power -= 2;
+                    })
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile023.png"
     },
@@ -207,7 +329,10 @@ export const cards: Card[] = [
         power: 7,
         keywords: ["tough"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                gameService.playCardFromOpponentDiscard();
+            }
         },
         image: "../assets/tile024.png"
     },
@@ -216,7 +341,10 @@ export const cards: Card[] = [
         power: 7,
         keywords: ["tough"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                gameService.playCardFromOpponentDiscard();
+            }
         },
         image: "../assets/tile025.png"
     },
@@ -237,7 +365,20 @@ export const cards: Card[] = [
         power: 8,
         keywords: [],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer) {
+                    game.playedCards.forEach(card => {
+                        if (card.name == "Bee Bear") card.minPowerBlock = 7;
+                    })
+                } else if (!playedByPlayer){
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name == "Bee Bear") card.minPowerBlock = 7;
+                    })
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile028.png"
     },
@@ -264,7 +405,20 @@ export const cards: Card[] = [
         power: 6,
         keywords: [],
         ability: {
-            type: "defeated"
+            type: "defeated",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                if (game.currentPlayer == PlayerType.Player) {
+                    const randomIndex = Math.floor(Math.random() * game.IAHand.length);
+                    const [removedElement] = game.IAHand.splice(randomIndex, 1);
+                    game.playerHand.push(removedElement);
+                } else {
+                    const randomIndex = Math.floor(Math.random() * game.playerHand.length);
+                    const [removedElement] = game.playerHand.splice(randomIndex, 1);
+                    game.IAHand.push(removedElement);
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile032.png"
     },
@@ -273,7 +427,13 @@ export const cards: Card[] = [
         power: 4,
         keywords: ["poisonous"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                game.healLife(2);
+                gameService.updateGame(game);
+                console.log(game)
+            }
         },
         image: "../assets/tile033.png"
     },
@@ -282,7 +442,12 @@ export const cards: Card[] = [
         power: 4,
         keywords: ["poisonous"],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                game.healLife(2);
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile034.png"
     },
@@ -291,7 +456,20 @@ export const cards: Card[] = [
         power: 9,
         keywords: [],
         ability: {
-            type: "attack"
+            type: "attack",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                if (game.isPlayer()) {
+                    if (game.playedCards.length < game.IAPlayedCards.length) {
+                        gameService.defeatCreature(0)
+                    }
+                } else if (!game.isPlayer()){
+                    if (game.IAPlayedCards.length < game.playedCards.length) {
+                        gameService.defeatCreature(0)
+                    }
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile035.png"
     },
@@ -300,7 +478,20 @@ export const cards: Card[] = [
         power: 9,
         keywords: [],
         ability: {
-            type: "attack"
+            type: "attack",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                if (game.isPlayer()) {
+                    if (game.playedCards.length < game.IAPlayedCards.length) {
+                        gameService.defeatCreature(0)
+                    }
+                } else if (!game.isPlayer()){
+                    if (game.IAPlayedCards.length < game.playedCards.length) {
+                        gameService.defeatCreature(0)
+                    }
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile036.png"
     },
@@ -309,7 +500,16 @@ export const cards: Card[] = [
         power: 4,
         keywords: [],
         ability: {
-            type: "attack"
+            type: "attack",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                if (game.isPlayer()) {
+                    game.IALife = 1;
+                } else {
+                    game.playerLife = 1;
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile037.png"
     },
@@ -318,7 +518,20 @@ export const cards: Card[] = [
         power: 7,
         keywords: ["tough"],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer) {
+                    game.playedCards.forEach(card => {
+                        if (card.name == "Elephantopus") card.minPowerBlock = 5;
+                    })
+                } else if (!playedByPlayer){
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name == "Elephantopus") card.minPowerBlock = 5;
+                    })
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile038.png"
     },
@@ -327,7 +540,18 @@ export const cards: Card[] = [
         power: 7,
         keywords: [],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                const game = gameService.getGame();
+                if (game.isPlayer()) {
+                    game.playerHand.push(...game.playerDiscard);
+                    game.playerDiscard.splice(0, game.playerDiscard.length);
+                } else {
+                    game.IAHand.push(...game.IADiscard);
+                    game.IADiscard.splice(0, game.IADiscard.length);
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile039.png"
     },
@@ -336,7 +560,10 @@ export const cards: Card[] = [
         power: 4,
         keywords: [],
         ability: {
-            type: "play"
+            type: "play",
+            execute: (gameService: GameService) => {
+                gameService.takeControl(0);
+            }
         },
         image: "../assets/tile040.png"
     },
@@ -345,7 +572,24 @@ export const cards: Card[] = [
         power: 1,
         keywords: ["poisonous"],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer) {
+                    game.playedCards.forEach(card => {
+                        if (card.name != "Snail Thrower" && card.power <= 4) {
+                            card.keywords.push(...["hunter", "poisonous"]);
+                        }
+                    })
+                } else if (!playedByPlayer){
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name != "Snail Thrower" && card.power <= 4) {
+                            card.keywords.push(...["hunter", "poisonous"]);
+                        }
+                    })
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile041.png"
     },
@@ -354,7 +598,10 @@ export const cards: Card[] = [
         power: 4,
         keywords: ["hunter"],
         ability: {
-            type: "attack"
+            type: "attack",
+            execute: (gameService: GameService) => {
+                gameService.defeatCreature(6);
+            }
         },
         image: "../assets/tile042.png"
     },
@@ -363,7 +610,11 @@ export const cards: Card[] = [
         power: 5,
         keywords: [],
         ability: {
-            type: "defeated"
+            type: "defeated",
+            execute: (gameService: GameService) => {
+                gameService.takeControl(5);
+                gameService.takeControl(5);
+            }
         },
         image: "../assets/tile043.png"
     },
@@ -372,7 +623,24 @@ export const cards: Card[] = [
         power: 4,
         keywords: ["tough"],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer) {
+                    game.playedCards.forEach(card => {
+                        if (card.name != "Shield Bugs") {
+                            card.power += 1;
+                        }
+                    })
+                } else if (!playedByPlayer){
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name != "Shield Bugs") {
+                            card.power += 1;
+                        }
+                    })
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile044.png"
     },
@@ -381,7 +649,24 @@ export const cards: Card[] = [
         power: 4,
         keywords: ["tough"],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer) {
+                    game.playedCards.forEach(card => {
+                        if (card.name != "Shield Bugs") {
+                            card.power += 1;
+                        }
+                    })
+                } else if (!playedByPlayer){
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name != "Shield Bugs") {
+                            card.power += 1;
+                        }
+                    })
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile045.png"
     },
@@ -390,7 +675,28 @@ export const cards: Card[] = [
         power: 2,
         keywords: ["hunter"],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer && game.currentPlayer == PlayerType.Player) {
+                    game.playedCards.forEach(card => {
+                        if (card.name == "Goblin Werewolf") card.power += 6;
+                    })
+                } else if (!playedByPlayer && game.currentPlayer == PlayerType.IA){
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name != "Goblin Werewolf") card.power += 6;
+                    })
+                } else if (playedByPlayer && game.currentPlayer == PlayerType.IA) {
+                    game.playedCards.forEach(card => {
+                        if (card.name != "Goblin Werewolf") card.power -= 6;
+                    })
+                } else if (!playedByPlayer && game.currentPlayer == PlayerType.Player) {
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name != "Goblin Werewolf") card.power -= 6;
+                    })
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile046.png"
     },
@@ -399,7 +705,28 @@ export const cards: Card[] = [
         power: 2,
         keywords: ["hunter"],
         ability: {
-            type: "permanent"
+            type: "permanent",
+            check: (gameService: GameService, playedByPlayer: boolean) => {
+                const game = gameService.getGame();
+                if (playedByPlayer && game.currentPlayer == PlayerType.Player) {
+                    game.playedCards.forEach(card => {
+                        if (card.name == "Goblin Werewolf") card.power += 6;
+                    })
+                } else if (!playedByPlayer && game.currentPlayer == PlayerType.IA){
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name != "Goblin Werewolf") card.power += 6;
+                    })
+                } else if (playedByPlayer && game.currentPlayer == PlayerType.IA) {
+                    game.playedCards.forEach(card => {
+                        if (card.name != "Goblin Werewolf") card.power -= 6;
+                    })
+                } else if (!playedByPlayer && game.currentPlayer == PlayerType.Player) {
+                    game.IAPlayedCards.forEach(card => {
+                        if (card.name != "Goblin Werewolf") card.power -= 6;
+                    })
+                }
+                gameService.updateGame(game);
+            }
         },
         image: "../assets/tile047.png"
     }

@@ -7,39 +7,49 @@
     <div id="IAArea">
         @for (card of game.IAPlayedCards; track card) {
         <div class="card">
-            <img [src]="card.image" [alt]="card.name" />
+            <img [src]="card.image" [alt]="card.name" [ngClass]="{ 'cardAttacking': isCardAttacking(card)}" />
         </div>
         }
     </div>
     <div id="info">
         <div id="IAInfo">
-            <p>Vida IA: 3</p>
-            <div id="ia-deck" class="deck" [attr.data-counter]="5">
-                <img src="../../assets/tile069.png" />
+            <p>IA Life: {{game.IALife}}</p>
+            <div id="ia-discard" class="deck" [attr.data-counter]="game.IADiscard.length">
+                <img src="../../assets/discard.png" alt="ia discard deck" *ngIf="game.IADiscard.length == 0" />
+                <img [src]="game.IADiscard[game.IADiscard.length - 1].image" alt="ia discard deck" *ngIf="game.IADiscard.length != 0" />
             </div>
+            <div id="ia-deck" class="deck" [attr.data-counter]="game.IADeck.length">
+                <img src="../../assets/tile069.png" alt="ia deck"/>
+            </div>
+            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug" [ngClass]="{ 'black-and-white': game.IAMindbugs == 0}"/>
+            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug" [ngClass]="{ 'black-and-white': game.IAMindbugs < 2 }"/>
         </div>
 
 
         <div id="playerInfo">
-            <p>Vida Jugador: 3</p>
-            <div id="player-deck" class="deck" [attr.data-counter]="5">
-                <img src="../../assets/tile069.png" />
+            <p>Player Life: {{game.playerLife}}</p>
+            <div id="player-discard" class="deck" [attr.data-counter]="game.playerDiscard.length" (click)="showDiscard()">
+                <img src="../../assets/discard.png" alt="player discard" *ngIf="game.playerDiscard.length == 0"/>
+                <img [src]="game.playerDiscard[game.playerDiscard.length - 1].image" alt="player discard" *ngIf="game.playerDiscard.length != 0"/>
             </div>
+            <div id="player-deck" class="deck" [attr.data-counter]="game.playerDeck.length">
+                <img src="../../assets/tile069.png" alt="player deck" />
+            </div>
+            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug" [ngClass]="{ 'black-and-white': game.playerMindbugs == 0}"/>
+            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug" [ngClass]="{ 'black-and-white': game.playerMindbugs < 2 }"/>
         </div>
     </div>
     <div id="playArea" cdkDropList #playArea="cdkDropList" cdkDropListOrientation="horizontal"
-        [cdkDropListData]="game.playedCards" [cdkDropListConnectedTo]="[handList]"
-        (cdkDropListDropped)="drop($event)">
+        [cdkDropListData]="game.playedCards" [cdkDropListConnectedTo]="[handList]" (cdkDropListDropped)="drop($event, 'playArea')" [ngClass]="{'disabled': !game.isPlayer() && !isDefend}">
         @for (card of game.playedCards; track card) {
         <div class="card">
-            <img [src]="card.image" [alt]="card.name" />
+            <img [src]="card.image" [alt]="card.name" (click)="selectCard(card)" [class.selected]="isSelected(card)"/>
         </div>
         }
     </div>
 
     <div class="hand" id="playerHand" cdkDropList #handList="cdkDropList" cdkDropListOrientation="horizontal"
-        [cdkDropListData]="game.playerHand" [cdkDropListConnectedTo]="[playArea]"
-        (cdkDropListDropped)="drop($event)">
+        [cdkDropListData]="game.playerHand" [cdkDropListConnectedTo]="[playArea]" (cdkDropListDropped)="drop($event, 'playerHand')" [ngClass]="{'disabled': !game.isPlayer()}">
         @for (card of game.playerHand; track card) {
         <div class="card" cdkDrag>
 
@@ -51,4 +61,14 @@
         }
 
     </div>
+    <div id="discard" *ngIf="showDiscardCards">
+        <button class="acceptButton" (click)="closeDiscard()" >Close</button>
+        <div class="card" *ngFor="let card of game.playerDiscard">
+            <img [src]="card.image" [alt]="card.name" />
+        </div>
+    </div>
+    <div [class.hidden]="isHidden" class="fade-text">{{text}}</div>
+    <button class="acceptButton" *ngIf="selectedCard && game.isPlayer()" (click)="attack()">Attack</button>
+    <button class="acceptButton" *ngIf="isDefend && selectedCard" (click)="defend()">Defend</button>
+    <button class="acceptButton" *ngIf="isDefend && !selectedCard" (click)="defend()">No Defend</button>
 </main>

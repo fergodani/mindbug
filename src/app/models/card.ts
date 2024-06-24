@@ -6,4 +6,5 @@ export interface Card {
     keywords: string[];
     ability?: Ability;
     image: string;
+    minPowerBlock?: number;
 }
