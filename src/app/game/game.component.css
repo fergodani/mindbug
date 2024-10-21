@@ -19,8 +19,21 @@ img {
 .card {
     cursor: grab;
     height: min-content;
+    position: relative;
 }
 
+.playedCard::before {
+    content: attr(data-counter);
+    position: absolute;
+    top: 1.1em;
+    left: 0;
+    color: #f3f3f3;
+    padding: 5px 10px;
+    font-weight: bold;
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+}
 
 
 #IAHand {
@@ -110,7 +123,6 @@ img {
     right: 0;
     padding: 5px 10px;
     font-weight: bold;
-    font-size: 14px;
     display: flex;
 
     font-size: 11px;

@@ -51,6 +51,17 @@ export class GameService {
   nextTurn() {
     const game = this.getGame();
     game.nextTurn();
+
+    game.IAPlayedCards.forEach(card => card.extraPower = 0);
+    game.playedCards.forEach(card => card.extraPower = 0);
+    game.IAPlayedCards.forEach(card => {
+      card.ability?.check?.(this, false);
+    })
+
+    game.playedCards.forEach(card => {
+      card.ability?.check?.(this, true);
+    })
+
     this.turn.next(game.currentPlayer);
     if (!game.isPlayer()) {
       this.ia.playTurn();
@@ -72,8 +83,13 @@ export class GameService {
 
   playCard(card: Card) {
     const game = this.getGame();
+  
+    game.IAPlayedCards.forEach(card => card.extraPower = 0);
+    game.playedCards.forEach(card => card.extraPower = 0);
     if (card.ability && card.ability.type == "play")
       card.ability.execute?.(this);
+    if (card.ability && card.ability.type == "permanent")
+      card.ability.check?.(this, game.isPlayer());
     if (!game.isPlayer()) {
       game.IAPlayedCards.push(card);
       game.IAHand = game.IAHand.filter(c => c != card);

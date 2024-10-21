@@ -42,7 +42,7 @@
     <div id="playArea" cdkDropList #playArea="cdkDropList" cdkDropListOrientation="horizontal"
         [cdkDropListData]="game.playedCards" [cdkDropListConnectedTo]="[handList]" (cdkDropListDropped)="drop($event, 'playArea')" [ngClass]="{'disabled': !game.isPlayer() && !isDefend}">
         @for (card of game.playedCards; track card) {
-        <div class="card">
+        <div class="card playedCard" [attr.data-counter]="'+ ' + card.extraPower">
             <img [src]="card.image" [alt]="card.name" (click)="selectCard(card)" [class.selected]="isSelected(card)"/>
         </div>
         }

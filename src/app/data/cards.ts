@@ -6,6 +6,7 @@ export const cards: Card[] = [
     {
         name: "Chamaleon Sniper",
         power: 1,
+        extraPower: 0,
         keywords: ["sneaky"],
         ability: {
             type: "attack",
@@ -20,12 +21,14 @@ export const cards: Card[] = [
     {
         name: "Gorillion",
         power: 10,
+        extraPower: 0,
         keywords: [],
         image: "../assets/tile001.png"
     },
     {
         name: "Mysterious Mermaid",
         power: 7,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "play",
@@ -43,6 +46,7 @@ export const cards: Card[] = [
     {
         name: "Lone Yeti",
         power: 5,
+        extraPower: 0,
         keywords: ["tough"],
         ability: {
             type: "permanent",
@@ -50,11 +54,11 @@ export const cards: Card[] = [
                 const game = gameService.getGame();
                 if (playedByPlayer) {
                     if (game.playedCards.length == 1) {
-                        game.playedCards[0].power += 5;
+                        game.playedCards[0].extraPower += 5;
                     }
                 } else if (!playedByPlayer){
                     if (game.IAPlayedCards.length == 1) {
-                        game.IAPlayedCards[0].power += 5;
+                        game.IAPlayedCards[0].extraPower += 5;
                     }
                 }
                 gameService.updateGame(game);
@@ -65,6 +69,7 @@ export const cards: Card[] = [
     {
         name: "Compost Dragon",
         power: 3,
+        extraPower: 0,
         keywords: ["hunter"],
         ability: {
             type: "play",
@@ -77,6 +82,7 @@ export const cards: Card[] = [
     {
         name: "Compost Dragon",
         power: 3,
+        extraPower: 0,
         keywords: ["hunter"],
         ability: {
             type: "play",
@@ -89,6 +95,7 @@ export const cards: Card[] = [
     {
         name: "Explosive Toad",
         power: 5,
+        extraPower: 0,
         keywords: ["frenzy"],
         ability: {
             type: "defeated",
@@ -101,6 +108,7 @@ export const cards: Card[] = [
     {
         name: "Explosive Toad",
         power: 5,
+        extraPower: 0,
         keywords: ["frenzy"],
         ability: {
             type: "defeated",
@@ -113,18 +121,21 @@ export const cards: Card[] = [
     {
         name: "Rhino Turtle",
         power: 8,
+        extraPower: 0,
         keywords: ["frenzy, tough"],
         image: "../assets/tile008.png"
     },
     {
         name: "Rhino Turtle",
         power: 8,
+        extraPower: 0,
         keywords: ["frenzy, tough"],
         image: "../assets/tile009.png"
     },
     {
         name: "Deathweaver",
         power: 2,
+        extraPower: 0,
         keywords: ["poisonous"],
         ability: {
             type: "permanent",
@@ -143,6 +154,7 @@ export const cards: Card[] = [
     {
         name: "Tusked Extorter",
         power: 8,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "attack",
@@ -155,6 +167,7 @@ export const cards: Card[] = [
     {
         name: "Tusked Extorter",
         power: 8,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "attack",
@@ -167,6 +180,7 @@ export const cards: Card[] = [
     {
         name: "Ferret Bomber",
         power: 2,
+        extraPower: 0,
         keywords: ["sneaky"],
         ability: {
             type: "play",
@@ -179,6 +193,7 @@ export const cards: Card[] = [
     {
         name: "Ferret Bomber",
         power: 2,
+        extraPower: 0,
         keywords: ["sneaky"],
         ability: {
             type: "play",
@@ -191,6 +206,7 @@ export const cards: Card[] = [
     {
         name: "Tiger Squirrel",
         power: 3,
+        extraPower: 0,
         keywords: ["sneaky"],
         ability: {
             type: "play",
@@ -203,6 +219,7 @@ export const cards: Card[] = [
     {
         name: "Tiger Squirrel",
         power: 3,
+        extraPower: 0,
         keywords: ["sneaky"],
         ability: {
             type: "play",
@@ -215,6 +232,7 @@ export const cards: Card[] = [
     {
         name: "Kangasaurus Rex",
         power: 7,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "play",
@@ -236,6 +254,7 @@ export const cards: Card[] = [
     {
         name: "Kangasaurus Rex",
         power: 7,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "play",
@@ -257,6 +276,7 @@ export const cards: Card[] = [
     {
         name: "Killer Bee",
         power: 5,
+        extraPower: 0,
         keywords: ["hunter"],
         ability: {
             type: "play",
@@ -271,6 +291,7 @@ export const cards: Card[] = [
     {
         name: "Killer Bee",
         power: 5,
+        extraPower: 0,
         keywords: ["hunter"],
         ability: {
             type: "play",
@@ -285,18 +306,21 @@ export const cards: Card[] = [
     {
         name: "Plated Scorpion",
         power: 2,
+        extraPower: 0,
         keywords: ["tough, poisonous"],
         image: "../assets/tile021.png"
     },
     {
         name: "Plated Scorpion",
         power: 2,
+        extraPower: 0,
         keywords: ["tough, poisonous"],
         image: "../assets/tile022.png"
     },
     {
         name: "Urchin Hurler",
         power: 5,
+        extraPower: 0,
         keywords: ["hunter"],
         ability: {
             type: "permanent",
@@ -304,19 +328,19 @@ export const cards: Card[] = [
                 const game = gameService.getGame();
                 if (playedByPlayer && game.currentPlayer == PlayerType.Player) {
                     game.playedCards.forEach(card => {
-                        if (card.name != "Urchin Hurler") card.power += 2;
+                        if (card.name != "Urchin Hurler") card.extraPower += 2;
                     })
                 } else if (!playedByPlayer && game.currentPlayer == PlayerType.IA){
                     game.IAPlayedCards.forEach(card => {
-                        if (card.name != "Urchin Hurler") card.power += 2;
+                        if (card.name != "Urchin Hurler") card.extraPower += 2;
                     })
                 } else if (playedByPlayer && game.currentPlayer == PlayerType.IA) {
                     game.playedCards.forEach(card => {
-                        if (card.name != "Urchin Hurler") card.power -= 2;
+                        if (card.name != "Urchin Hurler") card.extraPower -= 2;
                     })
                 } else if (!playedByPlayer && game.currentPlayer == PlayerType.Player) {
                     game.IAPlayedCards.forEach(card => {
-                        if (card.name != "Urchin Hurler") card.power -= 2;
+                        if (card.name != "Urchin Hurler") card.extraPower -= 2;
                     })
                 }
                 gameService.updateGame(game);
@@ -327,6 +351,7 @@ export const cards: Card[] = [
     {
         name: "Grave Robber",
         power: 7,
+        extraPower: 0,
         keywords: ["tough"],
         ability: {
             type: "play",
@@ -339,6 +364,7 @@ export const cards: Card[] = [
     {
         name: "Grave Robber",
         power: 7,
+        extraPower: 0,
         keywords: ["tough"],
         ability: {
             type: "play",
@@ -351,18 +377,21 @@ export const cards: Card[] = [
     {
         name: "Luchataur",
         power: 9,
+        extraPower: 0,
         keywords: ["frenzy"],
         image: "../assets/tile026.png"
     },
     {
         name: "Luchataur",
         power: 9,
+        extraPower: 0,
         keywords: ["frenzy"],
         image: "../assets/tile027.png"
     },
     {
         name: "Bee Bear",
         power: 8,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "permanent",
@@ -385,24 +414,28 @@ export const cards: Card[] = [
     {
         name: "Spider Owl",
         power: 3,
+        extraPower: 0,
         keywords: ["sneaky, poisonous"],
         image: "../assets/tile029.png"
     },
     {
         name: "Spider Owl",
         power: 3,
+        extraPower: 0,
         keywords: ["sneaky, poisonous"],
         image: "../assets/tile030.png"
     },
     {
         name: "Sharky Crab-dog-mummypus",
         power: 5,
+        extraPower: 0,
         keywords: ["all"],
         image: "../assets/tile031.png"
     },
     {
         name: "Strange Barrel",
         power: 6,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "defeated",
@@ -425,6 +458,7 @@ export const cards: Card[] = [
     {
         name: "Axolotl Healer",
         power: 4,
+        extraPower: 0,
         keywords: ["poisonous"],
         ability: {
             type: "play",
@@ -440,6 +474,7 @@ export const cards: Card[] = [
     {
         name: "Axolotl Healer",
         power: 4,
+        extraPower: 0,
         keywords: ["poisonous"],
         ability: {
             type: "play",
@@ -454,6 +489,7 @@ export const cards: Card[] = [
     {
         name: "Snail Hydra",
         power: 9,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "attack",
@@ -476,6 +512,7 @@ export const cards: Card[] = [
     {
         name: "Snail Hydra",
         power: 9,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "attack",
@@ -498,6 +535,7 @@ export const cards: Card[] = [
     {
         name: "Turbo bug",
         power: 4,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "attack",
@@ -516,6 +554,7 @@ export const cards: Card[] = [
     {
         name: "Elephantopus",
         power: 7,
+        extraPower: 0,
         keywords: ["tough"],
         ability: {
             type: "permanent",
@@ -538,6 +577,7 @@ export const cards: Card[] = [
     {
         name: "Giraffodile",
         power: 7,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "play",
@@ -558,6 +598,7 @@ export const cards: Card[] = [
     {
         name: "Brain Fly",
         power: 4,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "play",
@@ -570,6 +611,7 @@ export const cards: Card[] = [
     {
         name: "Snail Thrower",
         power: 1,
+        extraPower: 0,
         keywords: ["poisonous"],
         ability: {
             type: "permanent",
@@ -596,6 +638,7 @@ export const cards: Card[] = [
     {
         name: "Shark Dog",
         power: 4,
+        extraPower: 0,
         keywords: ["hunter"],
         ability: {
             type: "attack",
@@ -608,6 +651,7 @@ export const cards: Card[] = [
     {
         name: "Harpy Mother",
         power: 5,
+        extraPower: 0,
         keywords: [],
         ability: {
             type: "defeated",
@@ -621,6 +665,7 @@ export const cards: Card[] = [
     {
         name: "Shield Bugs",
         power: 4,
+        extraPower: 0,
         keywords: ["tough"],
         ability: {
             type: "permanent",
@@ -629,13 +674,13 @@ export const cards: Card[] = [
                 if (playedByPlayer) {
                     game.playedCards.forEach(card => {
                         if (card.name != "Shield Bugs") {
-                            card.power += 1;
+                            card.extraPower += 1;
                         }
                     })
                 } else if (!playedByPlayer){
                     game.IAPlayedCards.forEach(card => {
                         if (card.name != "Shield Bugs") {
-                            card.power += 1;
+                            card.extraPower += 1;
                         }
                     })
                 }
@@ -647,6 +692,7 @@ export const cards: Card[] = [
     {
         name: "Shield Bugs",
         power: 4,
+        extraPower: 0,
         keywords: ["tough"],
         ability: {
             type: "permanent",
@@ -655,13 +701,13 @@ export const cards: Card[] = [
                 if (playedByPlayer) {
                     game.playedCards.forEach(card => {
                         if (card.name != "Shield Bugs") {
-                            card.power += 1;
+                            card.extraPower += 1;
                         }
                     })
                 } else if (!playedByPlayer){
                     game.IAPlayedCards.forEach(card => {
                         if (card.name != "Shield Bugs") {
-                            card.power += 1;
+                            card.extraPower += 1;
                         }
                     })
                 }
@@ -673,6 +719,7 @@ export const cards: Card[] = [
     {
         name: "Goblin Werewolf",
         power: 2,
+        extraPower: 0,
         keywords: ["hunter"],
         ability: {
             type: "permanent",
@@ -680,19 +727,19 @@ export const cards: Card[] = [
                 const game = gameService.getGame();
                 if (playedByPlayer && game.currentPlayer == PlayerType.Player) {
                     game.playedCards.forEach(card => {
-                        if (card.name == "Goblin Werewolf") card.power += 6;
+                        if (card.name == "Goblin Werewolf") card.extraPower += 6;
                     })
                 } else if (!playedByPlayer && game.currentPlayer == PlayerType.IA){
                     game.IAPlayedCards.forEach(card => {
-                        if (card.name != "Goblin Werewolf") card.power += 6;
+                        if (card.name == "Goblin Werewolf") card.extraPower += 6;
                     })
                 } else if (playedByPlayer && game.currentPlayer == PlayerType.IA) {
                     game.playedCards.forEach(card => {
-                        if (card.name != "Goblin Werewolf") card.power -= 6;
+                        if (card.name == "Goblin Werewolf") card.extraPower -= 6;
                     })
                 } else if (!playedByPlayer && game.currentPlayer == PlayerType.Player) {
                     game.IAPlayedCards.forEach(card => {
-                        if (card.name != "Goblin Werewolf") card.power -= 6;
+                        if (card.name == "Goblin Werewolf") card.extraPower -= 6;
                     })
                 }
                 gameService.updateGame(game);
@@ -703,6 +750,7 @@ export const cards: Card[] = [
     {
         name: "Goblin Werewolf",
         power: 2,
+        extraPower: 0,
         keywords: ["hunter"],
         ability: {
             type: "permanent",
@@ -710,19 +758,19 @@ export const cards: Card[] = [
                 const game = gameService.getGame();
                 if (playedByPlayer && game.currentPlayer == PlayerType.Player) {
                     game.playedCards.forEach(card => {
-                        if (card.name == "Goblin Werewolf") card.power += 6;
+                        if (card.name == "Goblin Werewolf") card.extraPower += 6;
                     })
                 } else if (!playedByPlayer && game.currentPlayer == PlayerType.IA){
                     game.IAPlayedCards.forEach(card => {
-                        if (card.name != "Goblin Werewolf") card.power += 6;
+                        if (card.name == "Goblin Werewolf") card.extraPower += 6;
                     })
                 } else if (playedByPlayer && game.currentPlayer == PlayerType.IA) {
                     game.playedCards.forEach(card => {
-                        if (card.name != "Goblin Werewolf") card.power -= 6;
+                        if (card.name == "Goblin Werewolf") card.extraPower -= 6;
                     })
                 } else if (!playedByPlayer && game.currentPlayer == PlayerType.Player) {
                     game.IAPlayedCards.forEach(card => {
-                        if (card.name != "Goblin Werewolf") card.power -= 6;
+                        if (card.name == "Goblin Werewolf") card.extraPower -= 6;
                     })
                 }
                 gameService.updateGame(game);

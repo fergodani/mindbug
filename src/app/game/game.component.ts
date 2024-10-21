@@ -109,6 +109,10 @@ export class GameComponent implements OnInit {
 
   defend() {
     if (this.selectedCard){
+      const game = this.gameService.getGame();
+      if (this.selectedCard.power < game.lastCardPlayed?.minPowerBlock!) {
+        console.log("Cannot defend with " + this.selectedCard.name);
+      }
       this.gameService.defend(this.selectedCard);
       this.selectedCard = null;
       //this.passTurn();

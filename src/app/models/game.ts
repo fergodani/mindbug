@@ -30,6 +30,7 @@ export class Game {
 
   initGame() {
     const playerDeck = this.drawCards(this.cards, 10);
+    console.log(playerDeck)
     this.playerDeck.push(...playerDeck);
     const iaDeck = this.drawCards(this.cards, 10);
     this.IADeck.push(...iaDeck);
