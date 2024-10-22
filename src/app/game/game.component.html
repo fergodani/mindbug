@@ -4,10 +4,10 @@
             <img src="../../assets/tile069.png" [alt]="card.name" />
         </div>
     </div>
-    <div id="IAArea">
+    <div id="IAArea" [ngClass]="{'disabled': isDefeat == -1}">
         @for (card of game.IAPlayedCards; track card) {
         <div class="card">
-            <img [src]="card.image" [alt]="card.name" [ngClass]="{ 'cardAttacking': isCardAttacking(card)}" />
+            <img [src]="card.image" [alt]="card.name" (click)="selectCard(card)" [class.selected]="isSelected(card)" [ngClass]="{ 'cardAttacking': isCardAttacking(card)}" />
         </div>
         }
     </div>
@@ -80,6 +80,8 @@
     <button class="acceptButton" *ngIf="selectedCard && game.isPlayer()" (click)="attack()">Attack</button>
     <button class="acceptButton" *ngIf="isDefend && selectedCard" (click)="defend()">Defend</button>
     <button class="acceptButton" *ngIf="isDefend && !selectedCard" (click)="defend()">No Defend</button>
+    <button class="acceptButton" *ngIf="isDefeat != -1 && selectedCard" (click)="defeat()">Defeat</button>
+    <button class="acceptButton" *ngIf="isDefeat != -1 && !selectedCard" (click)="defeat()">No defeat</button>
 
     <app-card-list *ngIf="isModalOpen" (close)="closeModal()">
         <h2 *ngIf="isSelectingDiscardCard">Discard pile</h2>

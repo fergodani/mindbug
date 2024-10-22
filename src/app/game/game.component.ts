@@ -10,7 +10,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { GameService } from '../services/game.service';
 import { Observable } from 'rxjs';
-import { Game } from '../models/game';
+import { Game, PlayerType } from '../models/game';
 import { CardListComponent } from "./card-list/card-list.component";
 
 @Component({
@@ -28,6 +28,7 @@ export class GameComponent implements OnInit {
 
   isHidden: boolean = true;
   isDefend: boolean = false;
+  isDefeat: number = -1;
   showDiscardCards: boolean = false;
 
   isModalOpen = false;
@@ -66,6 +67,11 @@ export class GameComponent implements OnInit {
     this.gameService.isDefend.subscribe(
       newValue => {
         this.isDefend = newValue;
+      }
+    );
+    this.gameService.isDefeat.subscribe(
+      newValue => {
+        this.isDefeat = newValue;
       }
     );
   }
@@ -176,6 +182,16 @@ export class GameComponent implements OnInit {
   isCardAttacking(card: Card) {
     const game = this.gameService.getGame();
     return card == game.lastCardPlayed;
+  }
+
+  defeat() {
+    if (!this.selectedCard) {
+      console.log("Selecciona una carta");
+    }
+    const totalCardPower = this.selectedCard?.power! + this.selectedCard?.extraPower!;
+    if (totalCardPower >= this.isDefeat) {
+      this.gameService.defeat(this.selectedCard!, PlayerType.IA);
+    }
   }
 
   openModal() {

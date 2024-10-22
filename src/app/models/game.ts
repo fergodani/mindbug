@@ -38,15 +38,10 @@ export class Game {
 
     // *** TEST ***
     /*
-    let testCards = this.cards.filter(card => card.name == "Compost Dragon");
+    let testCards = this.cards.filter(card => card.name == "Tiger Squirrel");
     this.playerHand.push(testCards[0]);
-    this.playerDiscard.push(this.cards[13]);
-    this.playerDiscard.push(this.cards[14]);
-    this.playerDiscard.push(this.cards[15]);
-    this.playerDiscard.push(this.cards[15]);
-    this.playerDiscard.push(this.cards[16]);
-    this.playerDiscard.push(this.cards[18]);
     */
+    
   }
 
   nextTurn() {

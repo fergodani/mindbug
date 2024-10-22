@@ -12,6 +12,7 @@ export class GameService {
   private game: BehaviorSubject<Game>;
   public turn: BehaviorSubject<string>;
   public isDefend: BehaviorSubject<boolean>;
+  public isDefeat: BehaviorSubject<number>;
   public isSelectingDiscardCard: BehaviorSubject<boolean>;
   public isSelectingOpponentDiscardCard: BehaviorSubject<boolean>;
 
@@ -21,6 +22,7 @@ export class GameService {
     this.game = new BehaviorSubject(new Game());
     this.turn = new BehaviorSubject(PlayerType.Player.toString());
     this.isDefend = new BehaviorSubject(false);
+    this.isDefeat = new BehaviorSubject(-1);
     this.isSelectingDiscardCard = new BehaviorSubject(false);
     this.isSelectingOpponentDiscardCard = new BehaviorSubject(false);
     this.ia = new IA(this);
@@ -94,7 +96,7 @@ export class GameService {
   defeatCreature(minPower: number) { 
     const game = this.getGame();
     if (game.isPlayer() && game.IAPlayedCards.length != 0){
-
+      this.isDefeat.next(minPower);
     } else if (game.playedCards.length != 0) {
       this.ia.defeatCreature(minPower);
     }
@@ -123,8 +125,7 @@ export class GameService {
     game.lastCardPlayed = undefined;
     console.log("discard: " + this.isSelectingDiscardCard.value)
     console.log("opponent: " + this.isSelectingOpponentDiscardCard.value)
-    if (!this.isSelectingDiscardCard.value && !this.isSelectingOpponentDiscardCard.value){
-      console.log("Next turn...")
+    if (!this.isSelectingDiscardCard.value && !this.isSelectingOpponentDiscardCard.value && this.isDefeat.value == -1){
       this.nextTurn();
     }
   }
@@ -156,6 +157,7 @@ export class GameService {
   }
 
   attack(card: Card) {
+    // TODO: hacer el caso de que al atacar la habilidad derrote a un enemigo. Ahora pasa turno
     console.log("Attacking with:")
     console.log(card)
     const game = this.getGame();
@@ -206,5 +208,10 @@ export class GameService {
       card.ability.execute?.(this);
     game.discardCard(card, deck);
     this.updateGame(game);
+
+    if (this.isDefeat.value != -1) {
+      this.isDefeat.next(-1);
+      this.nextTurn();
+    }
   }
 }
