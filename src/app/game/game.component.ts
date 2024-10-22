@@ -11,11 +11,12 @@ import {
 import { GameService } from '../services/game.service';
 import { Observable } from 'rxjs';
 import { Game } from '../models/game';
+import { CardListComponent } from "./card-list/card-list.component";
 
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [NgFor, NgIf, DragDropModule, AsyncPipe, NgClass],
+  imports: [NgFor, NgIf, DragDropModule, AsyncPipe, NgClass, CardListComponent],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css'
 })
@@ -29,6 +30,12 @@ export class GameComponent implements OnInit {
   isDefend: boolean = false;
   showDiscardCards: boolean = false;
 
+  isModalOpen = false;
+  modalCards: Card[] = [];
+  selectedModalCard: Card | null = null;
+  isSelectingDiscardCard: boolean = false;
+  isSelectingOpponentDiscardCard: boolean = false;
+
   constructor(
     public gameService: GameService
   ) {
@@ -36,6 +43,24 @@ export class GameComponent implements OnInit {
     this.gameService.turn.subscribe(
       newValue => {
         this.nextTurn();
+      }
+    );
+    this.gameService.isSelectingDiscardCard.subscribe(
+      newValue => {
+        this.isSelectingDiscardCard = newValue;
+        if (newValue)
+          this.openModal();
+        else
+          this.closeModal();
+      }
+    );
+    this.gameService.isSelectingOpponentDiscardCard.subscribe(
+      newValue => {
+        this.isSelectingOpponentDiscardCard = newValue;
+        if (newValue)
+          this.openModal();
+        else
+          this.closeModal();
       }
     );
     this.gameService.isDefend.subscribe(
@@ -48,8 +73,6 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
     this.gameService.initGame();
   }
-
-  
 
   drop(event: CdkDragDrop<Card[]>, destino: string) {
     if (!event.container.data || !event.previousContainer.data) return;
@@ -64,6 +87,19 @@ export class GameComponent implements OnInit {
       );
       this.gameService.playCard(event.container.data[0])
     }
+  }
+
+  playCard() {
+    const game = this.gameService.getGame();
+    if (this.isSelectingDiscardCard) {
+      game.playerDiscard = game.playerDiscard.filter(card => card !== this.selectedModalCard)
+      game.playedCards.push(this.selectedModalCard!);
+    } else if (this.isSelectingOpponentDiscardCard) {
+      game.IADiscard = game.IADiscard.filter(card => card !== this.selectedModalCard)
+      game.IAPlayedCards.push(this.selectedModalCard!);
+    }
+    this.gameService.playCardWithoutPass(this.selectedModalCard!);
+    this.selectedModalCard = null;
   }
 
   showDiscard() {
@@ -81,8 +117,16 @@ export class GameComponent implements OnInit {
       this.selectedCard = card;
   }
 
+  selectModalCard(card: Card): void {
+    // TODO: si sale la misma se seleccionan las dos
+    if (this.selectedModalCard === card)
+      this.selectedModalCard = null;
+    else
+      this.selectedModalCard = card;
+  }
+
   isSelected(card: Card): boolean {
-    return card === this.selectedCard;
+    return card === this.selectedCard || card === this.selectedModalCard;
   }
 
   nextTurn() {
@@ -134,4 +178,13 @@ export class GameComponent implements OnInit {
     return card == game.lastCardPlayed;
   }
 
+  openModal() {
+    const game = this.gameService.getGame();
+    this.modalCards = game.playerHand;
+    this.isModalOpen = true;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+  }
 }

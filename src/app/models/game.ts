@@ -30,12 +30,23 @@ export class Game {
 
   initGame() {
     const playerDeck = this.drawCards(this.cards, 10);
-    console.log(playerDeck)
     this.playerDeck.push(...playerDeck);
     const iaDeck = this.drawCards(this.cards, 10);
     this.IADeck.push(...iaDeck);
     this.playerHand.push(...this.drawCards(this.playerDeck, 5));
     this.IAHand.push(...this.drawCards(this.IADeck, 5));
+
+    // *** TEST ***
+    /*
+    let testCards = this.cards.filter(card => card.name == "Compost Dragon");
+    this.playerHand.push(testCards[0]);
+    this.playerDiscard.push(this.cards[13]);
+    this.playerDiscard.push(this.cards[14]);
+    this.playerDiscard.push(this.cards[15]);
+    this.playerDiscard.push(this.cards[15]);
+    this.playerDiscard.push(this.cards[16]);
+    this.playerDiscard.push(this.cards[18]);
+    */
   }
 
   nextTurn() {

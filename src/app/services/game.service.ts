@@ -12,6 +12,8 @@ export class GameService {
   private game: BehaviorSubject<Game>;
   public turn: BehaviorSubject<string>;
   public isDefend: BehaviorSubject<boolean>;
+  public isSelectingDiscardCard: BehaviorSubject<boolean>;
+  public isSelectingOpponentDiscardCard: BehaviorSubject<boolean>;
 
   private ia: IA;
 
@@ -19,6 +21,8 @@ export class GameService {
     this.game = new BehaviorSubject(new Game());
     this.turn = new BehaviorSubject(PlayerType.Player.toString());
     this.isDefend = new BehaviorSubject(false);
+    this.isSelectingDiscardCard = new BehaviorSubject(false);
+    this.isSelectingOpponentDiscardCard = new BehaviorSubject(false);
     this.ia = new IA(this);
   }
 
@@ -70,14 +74,33 @@ export class GameService {
   }
 
   playCardFromDiscard() { 
-
+    const game = this.getGame();
+    if (game.isPlayer() && game.playerDiscard.length != 0) {
+      this.isSelectingDiscardCard.next(true);
+    } else if (game.IADiscard.length != 0) {
+      this.ia.playDiscardCard();
+    }
   }
 
-  playCardFromOpponentDiscard() { }
+  playCardFromOpponentDiscard() { 
+    const game = this.getGame();
+    if (game.isPlayer() && game.IADiscard.length != 0) {
+      this.isSelectingOpponentDiscardCard.next(true);
+    } else if (game.playerDiscard.length != 0){
+      this.ia.playDiscardCardFromOpponent();
+    }
+  }
 
-  defeatCreature(minPower: number) { }
+  defeatCreature(minPower: number) { 
+    const game = this.getGame();
+    if (game.isPlayer() && game.IAPlayedCards.length != 0){
 
-  discardCardOponent(amount: number) { }
+    } else if (game.playedCards.length != 0) {
+      this.ia.defeatCreature(minPower);
+    }
+  }
+
+  discardCardOpponent(amount: number) { }
 
   takeControl(maxPower: number, mindbug: boolean = false) { }
 
@@ -96,6 +119,31 @@ export class GameService {
       game.iaDrawCard();
     } else {
       game.playerDrawCard();
+    }
+    game.lastCardPlayed = undefined;
+    console.log("discard: " + this.isSelectingDiscardCard.value)
+    console.log("opponent: " + this.isSelectingOpponentDiscardCard.value)
+    if (!this.isSelectingDiscardCard.value && !this.isSelectingOpponentDiscardCard.value){
+      console.log("Next turn...")
+      this.nextTurn();
+    }
+  }
+
+  playCardWithoutPass(card: Card) {
+    this.isSelectingDiscardCard.next(false);
+    this.isSelectingOpponentDiscardCard.next(false);
+
+    const game = this.getGame();
+  
+    game.IAPlayedCards.forEach(card => card.extraPower = 0);
+    game.playedCards.forEach(card => card.extraPower = 0);
+    if (card.ability && card.ability.type == "play")
+      card.ability.execute?.(this);
+    if (card.ability && card.ability.type == "permanent")
+      card.ability.check?.(this, game.isPlayer());
+    if (!game.isPlayer()) {
+      game.IAPlayedCards.push(card);
+      game.IAHand = game.IAHand.filter(c => c != card);
     }
     game.lastCardPlayed = undefined;
     this.nextTurn();

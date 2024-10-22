@@ -159,7 +159,7 @@ export const cards: Card[] = [
         ability: {
             type: "attack",
             execute: (gameService: GameService) => {
-                gameService.discardCardOponent(1);
+                gameService.discardCardOpponent(1);
             }
         },
         image: "../assets/tile011.png"
@@ -172,7 +172,7 @@ export const cards: Card[] = [
         ability: {
             type: "attack",
             execute: (gameService: GameService) => {
-                gameService.discardCardOponent(1);
+                gameService.discardCardOpponent(1);
             }
         },
         image: "../assets/tile012.png"
@@ -185,7 +185,7 @@ export const cards: Card[] = [
         ability: {
             type: "play",
             execute: (gameService: GameService) => {
-                gameService.discardCardOponent(2);
+                gameService.discardCardOpponent(2);
             }
         },
         image: "../assets/tile013.png"
@@ -198,7 +198,7 @@ export const cards: Card[] = [
         ability: {
             type: "play",
             execute: (gameService: GameService) => {
-                gameService.discardCardOponent(2);
+                gameService.discardCardOpponent(2);
             }
         },
         image: "../assets/tile014.png"
@@ -333,14 +333,6 @@ export const cards: Card[] = [
                 } else if (!playedByPlayer && game.currentPlayer == PlayerType.IA){
                     game.IAPlayedCards.forEach(card => {
                         if (card.name != "Urchin Hurler") card.extraPower += 2;
-                    })
-                } else if (playedByPlayer && game.currentPlayer == PlayerType.IA) {
-                    game.playedCards.forEach(card => {
-                        if (card.name != "Urchin Hurler") card.extraPower -= 2;
-                    })
-                } else if (!playedByPlayer && game.currentPlayer == PlayerType.Player) {
-                    game.IAPlayedCards.forEach(card => {
-                        if (card.name != "Urchin Hurler") card.extraPower -= 2;
                     })
                 }
                 gameService.updateGame(game);

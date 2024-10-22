@@ -16,40 +16,49 @@
             <p>IA Life: {{game.IALife}}</p>
             <div id="ia-discard" class="deck" [attr.data-counter]="game.IADiscard.length">
                 <img src="../../assets/discard.png" alt="ia discard deck" *ngIf="game.IADiscard.length == 0" />
-                <img [src]="game.IADiscard[game.IADiscard.length - 1].image" alt="ia discard deck" *ngIf="game.IADiscard.length != 0" />
+                <img [src]="game.IADiscard[game.IADiscard.length - 1].image" alt="ia discard deck"
+                    *ngIf="game.IADiscard.length != 0" />
             </div>
             <div id="ia-deck" class="deck" [attr.data-counter]="game.IADeck.length">
-                <img src="../../assets/tile069.png" alt="ia deck"/>
+                <img src="../../assets/tile069.png" alt="ia deck" />
             </div>
-            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug" [ngClass]="{ 'black-and-white': game.IAMindbugs == 0}"/>
-            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug" [ngClass]="{ 'black-and-white': game.IAMindbugs < 2 }"/>
+            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug"
+                [ngClass]="{ 'black-and-white': game.IAMindbugs == 0}" />
+            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug"
+                [ngClass]="{ 'black-and-white': game.IAMindbugs < 2 }" />
         </div>
 
 
         <div id="playerInfo">
             <p>Player Life: {{game.playerLife}}</p>
-            <div id="player-discard" class="deck" [attr.data-counter]="game.playerDiscard.length" (click)="showDiscard()">
-                <img src="../../assets/discard.png" alt="player discard" *ngIf="game.playerDiscard.length == 0"/>
-                <img [src]="game.playerDiscard[game.playerDiscard.length - 1].image" alt="player discard" *ngIf="game.playerDiscard.length != 0"/>
+            <div id="player-discard" class="deck" [attr.data-counter]="game.playerDiscard.length"
+                (click)="showDiscard()">
+                <img src="../../assets/discard.png" alt="player discard" *ngIf="game.playerDiscard.length == 0" />
+                <img [src]="game.playerDiscard[game.playerDiscard.length - 1].image" alt="player discard"
+                    *ngIf="game.playerDiscard.length != 0" />
             </div>
             <div id="player-deck" class="deck" [attr.data-counter]="game.playerDeck.length">
                 <img src="../../assets/tile069.png" alt="player deck" />
             </div>
-            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug" [ngClass]="{ 'black-and-white': game.playerMindbugs == 0}"/>
-            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug" [ngClass]="{ 'black-and-white': game.playerMindbugs < 2 }"/>
+            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug"
+                [ngClass]="{ 'black-and-white': game.playerMindbugs == 0}" />
+            <img class="mindbug" src="../../assets/mindbug.png" alt="mindbug"
+                [ngClass]="{ 'black-and-white': game.playerMindbugs < 2 }" />
         </div>
     </div>
     <div id="playArea" cdkDropList #playArea="cdkDropList" cdkDropListOrientation="horizontal"
-        [cdkDropListData]="game.playedCards" [cdkDropListConnectedTo]="[handList]" (cdkDropListDropped)="drop($event, 'playArea')" [ngClass]="{'disabled': !game.isPlayer() && !isDefend}">
+        [cdkDropListData]="game.playedCards" [cdkDropListConnectedTo]="[handList]"
+        (cdkDropListDropped)="drop($event, 'playArea')" [ngClass]="{'disabled': !game.isPlayer() && !isDefend}">
         @for (card of game.playedCards; track card) {
         <div class="card playedCard" [attr.data-counter]="'+ ' + card.extraPower">
-            <img [src]="card.image" [alt]="card.name" (click)="selectCard(card)" [class.selected]="isSelected(card)"/>
+            <img [src]="card.image" [alt]="card.name" (click)="selectCard(card)" [class.selected]="isSelected(card)" />
         </div>
         }
     </div>
 
     <div class="hand" id="playerHand" cdkDropList #handList="cdkDropList" cdkDropListOrientation="horizontal"
-        [cdkDropListData]="game.playerHand" [cdkDropListConnectedTo]="[playArea]" (cdkDropListDropped)="drop($event, 'playerHand')" [ngClass]="{'disabled': !game.isPlayer()}">
+        [cdkDropListData]="game.playerHand" [cdkDropListConnectedTo]="[playArea]"
+        (cdkDropListDropped)="drop($event, 'playerHand')" [ngClass]="{'disabled': !game.isPlayer()}">
         @for (card of game.playerHand; track card) {
         <div class="card" cdkDrag>
 
@@ -62,7 +71,7 @@
 
     </div>
     <div id="discard" *ngIf="showDiscardCards">
-        <button class="acceptButton" (click)="closeDiscard()" >Close</button>
+        <button class="acceptButton" (click)="closeDiscard()">Close</button>
         <div class="card" *ngFor="let card of game.playerDiscard">
             <img [src]="card.image" [alt]="card.name" />
         </div>
@@ -71,4 +80,23 @@
     <button class="acceptButton" *ngIf="selectedCard && game.isPlayer()" (click)="attack()">Attack</button>
     <button class="acceptButton" *ngIf="isDefend && selectedCard" (click)="defend()">Defend</button>
     <button class="acceptButton" *ngIf="isDefend && !selectedCard" (click)="defend()">No Defend</button>
+
+    <app-card-list *ngIf="isModalOpen" (close)="closeModal()">
+        <h2 *ngIf="isSelectingDiscardCard">Discard pile</h2>
+        <h2 *ngIf="isSelectingOpponentDiscardCard">Opponent Discard pile</h2>
+        <div id="cardList" *ngIf="isSelectingDiscardCard">
+            <div class="card" *ngFor="let card of game.playerDiscard">
+                <img [src]="card.image" [alt]="card.name" (click)="selectModalCard(card)" [class.selected]="isSelected(card)" />
+            </div>
+            <button class="acceptButton" *ngIf="selectedModalCard && game.isPlayer()" (click)="playCard()">Select</button>
+        </div>
+
+        <div id="cardList" *ngIf="isSelectingOpponentDiscardCard">
+            <div class="card" *ngFor="let card of game.IADiscard">
+                <img [src]="card.image" [alt]="card.name" (click)="selectModalCard(card)" [class.selected]="isSelected(card)" />
+            </div>
+            <button class="acceptButton" *ngIf="selectedModalCard && game.isPlayer()" (click)="playCard()">Select</button>
+        </div>
+
+    </app-card-list>
 </main>

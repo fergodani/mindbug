@@ -29,4 +29,19 @@ export class IA {
             this.gameService.defend();
         }
     }
+
+    playDiscardCard() {
+        // TODO: Implementar
+        console.log("IA Jugando carta de la pila de descartes")
+    }
+
+    playDiscardCardFromOpponent() {
+        // TODO: Implementar
+        console.log("IA Jugando carta de la pila de descartes del jugador");
+    }
+
+    defeatCreature(minPower: number) {
+        // TODO: Implementar
+        console.log("IA Derrotando una criatura")
+    }
 }

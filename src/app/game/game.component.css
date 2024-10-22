@@ -203,6 +203,17 @@ img.selected {
     transform: scale(1.5);
 }
 
+h2 {
+    color: #f3f3f3;
+    text-align: center;
+}
+
+#cardList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    justify-content: center;
+}
 @media (max-width: 768px) {
     img {
         width: 75px;
